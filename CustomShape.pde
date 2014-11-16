@@ -37,7 +37,7 @@ class CustomShape {
      new Vec2D(r, -r*1.5), 
      new Vec2D(-r, -r*1.5)));*/
 
-    if (r == -1) // jika radius adalah -1 
+    if (r == -1) 
     {
       PolygonShape sd = new PolygonShape(); // box2d polygon shape
       toxiPoly = new Circle(random(5, 20)).toPolygon2D(int(random(3, 6))); // toxiclibs polygon creator (triangle, square, etc)      
@@ -53,7 +53,7 @@ class CustomShape {
       body.createFixture(sd, 1); // create the fixture from the shape (deflect things based on the actual polygon shape)
     }
 
-    else 
+    else // r != -1 (bentuk lingkaran)
     {
       // box2d circle shape of radius r
       CircleShape cs = new CircleShape();
@@ -105,8 +105,8 @@ class CustomShape {
     }
   }
 
-// display the customShape
-void display() {
+  // display the customShape
+  void display() {
     // get the pixel coordinates of the body
     Vec2 pos = box2d.getBodyPixelCoord(body);
     pushMatrix();
@@ -114,7 +114,7 @@ void display() {
     translate(pos.x, pos.y);
     noStroke();
     // use the shape's custom color
-    fill(col);
+    fill(#7CB8FF);
 
     if (r == -1) {
       // rotate by the body's angle
@@ -123,7 +123,7 @@ void display() {
       gfx.polygon2D(toxiPoly);
     } 
     else {
-      ellipse(0, 0, r*2, r*2);
+      ellipse(0, 0, r*3, r*3);
     }
 
     popMatrix();

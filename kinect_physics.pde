@@ -16,31 +16,31 @@ import org.jbox2d.collision.shapes.*; // jbox2d
 import org.jbox2d.dynamics.joints.*;
 import org.jbox2d.common.*; // jbox2d
 import org.jbox2d.dynamics.*; // jbox2d
- 
-// declare SimpleOpenNI object
-SimpleOpenNI context;
-// declare BlobDetection object
-BlobDetection theBlobDetection;
-// ToxiclibsSupport for displaying polygons
-ToxiclibsSupport gfx;
-// declare custom PolygonBlob object (see class for more info)
-PolygonBlob poly;
- 
-// PImage to hold incoming imagery and smaller one for blob detection
-PImage blobs;
 
-// the kinect's dimensions to be used later on for calculations
-int kinectWidth = 1280;
-int kinectHeight = 1080;
-PImage cam = createImage(1280, 1080, RGB);
 
-// Variable to center and rescale from 640x480 to higher custom resolutions
-float reScale;
+SimpleOpenNI context; // declare SimpleOpenNI object
+
+BlobDetection theBlobDetection; // declare BlobDetection object
+
+ToxiclibsSupport gfx; // ToxiclibsSupport for displaying polygons
+
+PolygonBlob poly; // declare custom PolygonBlob object (see class for more info)
  
-// background and blob color
-color bgColor, blobColor;
 
-// three color palettes (artifact from me storingmany interesting color palettes as strings in an external data file ;-)
+PImage blobs; // PImage to hold incoming imagery and smaller one for blob detection
+PImage pipa;
+
+int kinectWidth = 640; // the kinect's dimensions to be used later on for calculations
+int kinectHeight = 480;
+PImage cam = createImage(640, 480, RGB);
+
+
+float reScale; // Variable to center and rescale from 640x480 to higher custom resolutions
+ 
+
+color bgColor, blobColor; // background and blob color
+
+// three color palettes (artifact from me storing many interesting color palettes as strings in an external data file ;-)
 String[] palettes = {
   "-1117720,-13683658,-8410437,-9998215,-1849945,-5517090,-4250587,-14178341,-5804972,-3498634", 
   "-67879,-9633503,-8858441,-144382,-4996094,-16604779,-588031", 
@@ -50,59 +50,9 @@ color[] colorPalette;
  
 Box2DProcessing box2d; // the main PBox2D object in which all the physics-based stuff is happening
 
-// polygon termasuk tipe ArrayList // list to hold all the custom shapes (circles, polygons)
-ArrayList<CustomShape> polygons = new ArrayList<CustomShape>();
+
+ArrayList<CustomShape> polygons = new ArrayList<CustomShape>(); // polygon termasuk tipe ArrayList // list to hold all the custom shapes (circles, polygons)
  
-void setup() {
-  // it's possible to customize this, for example 1920x1080
-  size(640, 480, OPENGL);
-  context = new SimpleOpenNI(this);
-
-  // initialize SimpleOpenNI object
-  if (!context.enableDepth() || !context.enableUser()) { 
-    // if context.enableUser() returns false
-    // then the Kinect is not working correctly
-    // make sure the green light is blinking
-    println("Kinect not connected!"); 
-    exit();
-  } else {
-    // mirror the image to be more intuitive
-	// context => kinect dengan bacaan mirror thd screen //
-    context.setMirror(true);
-    
-	// calculate the reScale value
-    // currently it's rescaled to fill the complete width (cuts of top-bottom)
-    // it's also possible to fill the complete height (leaves empty sides)
-    reScale = (float) width / kinectWidth;
-    
-	// create a smaller blob image for speed and efficiency
-	// PImage blobs;
-    blobs = createImage(kinectWidth/3, kinectHeight/3, RGB);
-	
-    // initialize blob detection object to the blob image dimensions
-	// BlobDetection theBlobDetection;
-	// ****************************************** Setting blob treshold ***************************************** //
-    theBlobDetection = new BlobDetection(blobs.width, blobs.height);
-    theBlobDetection.setThreshold(0.3);
-
-    // initialize ToxiclibsSupport object	
-    gfx = new ToxiclibsSupport(this);
-    
-    box2d = new Box2DProcessing(this); // setup box2d
-    box2d.createWorld();               // create world
-    box2d.setGravity(0, -40);          // set gravity
-
-    // set random colors (background, blob)
-    setRandomColors(1);
-    
-    float gap = kinectWidth / 21;
-    for (int i=0; i<20; i++)
-    {
-      drawString(gap * (i+1), 2, 10);
-    }
-  }
-}
-
 void drawString(float x, float size, int cards) {
   
   float gap = kinectHeight/cards;
@@ -122,7 +72,7 @@ void drawString(float x, float size, int cards) {
     Vec2 c1 = last_shape.body.getWorldCenter();
     Vec2 c2 = next_shape.body.getWorldCenter();
 
-	// offset the anchors so the cards hang vertically
+  // offset the anchors so the cards hang vertically
     c1.y = c1.y + size / 5;
     c2.y = c2.y - size / 5;
     jd.initialize(last_shape.body, next_shape.body, c1, c2);
@@ -131,10 +81,63 @@ void drawString(float x, float size, int cards) {
     polygons.add(next_shape);
     last_shape = next_shape;
   }
+} 
+ 
+void setup() {
+  // it's possible to customize this, for example 1920x1080
+  size(640, 480, P3D); //default: 640, 480
+  context = new SimpleOpenNI(this);
+  
+  pipa = loadImage("aset/Pipa.png");
+  pipa.resize(400,80);
+
+  // initialize SimpleOpenNI object
+  if (!context.enableDepth() || !context.enableUser()) { 
+    println("Kinect not connected!"); 
+    exit();
+  } else {
+    context.setMirror(true); // mirror kinect reading to be more intuitive
+    
+    // calculate the reScale value
+    // currently it's rescaled to fill the complete width (cuts of top-bottom)
+    // it's also possible to fill the complete height (leaves empty sides)
+    reScale = (float) width / kinectWidth;
+    
+    // create a smaller blob image for speed and efficiency
+    // PImage blobs;
+    blobs = createImage(kinectWidth/3, kinectHeight/3, RGB); // default: kinectWidth/3, kinectHeight/3
+	
+    // initialize blob detection object to the blob image dimensions
+    // BlobDetection theBlobDetection;
+    // ****************************************** Setting blob treshold ***************************************** //
+    theBlobDetection = new BlobDetection(blobs.width, blobs.height);
+    theBlobDetection.setThreshold(0.3); // defaults: 0.3
+
+    // initialize ToxiclibsSupport object	
+    gfx = new ToxiclibsSupport(this);
+    
+    box2d = new Box2DProcessing(this); // setup box2d
+    box2d.createWorld();               // create world
+    box2d.setGravity(0, -40);          // set gravity
+
+    // set random colors (background, blob)
+    setRandomColors(1);
+    
+    float gap = kinectWidth / 21;
+    for (int i=0; i<20; i++)
+    {
+      drawString(gap * (i+1), 2, 10);
+    }
+  }
 }
+
+
  
 void draw() {
   background(bgColor);
+  // video assets
+  image(pipa,-70,-30);
+  
   // update the SimpleOpenNI object
   context.update();
 
@@ -179,16 +182,16 @@ void draw() {
   poly.destroyBody();
 
   // set the colors randomly every 240th frame
-  setRandomColors(240);
+  //setRandomColors(240);
 }
  
 void updateAndDrawBox2D() {
   // if frameRate is sufficient, add a polygon and a circle with a random radius
 
-  if (frameRate > 30) {
-    CustomShape shape1 = new CustomShape(kinectWidth/2, -50, -1,BodyType.DYNAMIC) ;
-    CustomShape shape2 = new CustomShape(kinectWidth/2, -50, random(2.5, 20),BodyType.DYNAMIC);
-    polygons.add(shape1);
+  if (frameRate > 10) {
+    //CustomShape shape1 = new CustomShape(kinectWidth/2, -50, -1,BodyType.DYNAMIC) ;
+    CustomShape shape2 = new CustomShape(kinectWidth/2, -50, random(2.5, 5),BodyType.DYNAMIC); // lingkaran
+    //polygons.add(shape1);
     polygons.add(shape2);
   }
   // take one step in the box2d physics world
