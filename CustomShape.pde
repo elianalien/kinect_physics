@@ -15,10 +15,9 @@ class CustomShape {
   CustomShape(float x, float y, float r, BodyType type) {
     this.r = r;    
     makeBody(x, y, type); // fungsi makebody dibawah. create a body (polygon or circle based on the r)     
-    col = getRandomColor(); // get a random color
+    col = getRandomColor(); // get a random color. getRandomColor() #FF0000 
   }
 
-  // fungsi untuk membuat body
   void makeBody(float x, float y, BodyType type) 
   {
     // define a dynamic body positioned at xy in box2d world coordinates,
@@ -114,7 +113,7 @@ class CustomShape {
     translate(pos.x, pos.y);
     noStroke();
     // use the shape's custom color
-    fill(#7CB8FF);
+    fill(#7CB8FF); //#7CB8FF
 
     if (r == -1) {
       // rotate by the body's angle
@@ -123,7 +122,8 @@ class CustomShape {
       gfx.polygon2D(toxiPoly);
     } 
     else {
-      ellipse(0, 0, r*3, r*3);
+      // UKURAN BUBBLE AIR
+      ellipse(0, 0, r*2, r*2);
     }
 
     popMatrix();

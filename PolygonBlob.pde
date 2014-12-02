@@ -16,7 +16,7 @@ class PolygonBlob extends Polygon2D {
     // create contours from blobs
     for (int n=0 ; n<theBlobDetection.getBlobNb(); n++) {
       Blob b = theBlobDetection.getBlob(n);
-      if (b != null && b.getEdgeNb() > 100) {
+      if (b != null && b.getEdgeNb() > 100) { //(b != null && b.getEdgeNb() > 200)
         ArrayList<PVector> contour = new ArrayList<PVector>();
         for (int m=0; m<b.getEdgeNb(); m++) {
           EdgeVertex eA = b.getEdgeVertexA(m);
@@ -26,7 +26,7 @@ class PolygonBlob extends Polygon2D {
             EdgeVertex fp = b.getEdgeVertexA((max(0, m-1)));
             float dn = dist(eA.x*kinectWidth, eA.y*kinectHeight, fn.x*kinectWidth, fn.y*kinectHeight);
             float dp = dist(eA.x*kinectWidth, eA.y*kinectHeight, fp.x*kinectWidth, fp.y*kinectHeight);
-            if (dn > 15 || dp > 15) {
+            if (dn > 15 || dp > 15) { //(dn > 15 || dp > 15)
               if (contour.size() > 0) {
                 contour.add(new PVector(eB.x*kinectWidth, eB.y*kinectHeight));
                 contours.add(contour);
